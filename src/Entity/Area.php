@@ -20,7 +20,7 @@ class Area
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
-    private ?structure $structure = null;
+    private ?Structure $structure = null;
 
     #[ORM\OneToMany(targetEntity: StockArticle::class, mappedBy: 'area')]
     private Collection $stockArticles;

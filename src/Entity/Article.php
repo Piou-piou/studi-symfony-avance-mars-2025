@@ -18,7 +18,7 @@ class Article
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
-    private ?structure $structure = null;
+    private ?Structure $structure = null;
 
     public function getId(): ?int
     {

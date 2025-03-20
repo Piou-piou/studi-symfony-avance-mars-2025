@@ -1,0 +1,27 @@
+{% extends 'crud/list.html.twig' %}
+
+{% block title %}Liste des emplacements{% endblock %}
+{% block page_title %}Liste des emplacements{% endblock %}
+
+{% block thead_td %}
+    <th>Id</th>
+    <th>Name</th>
+    <th>actions</th>
+{% endblock %}
+
+{% block tbody %}
+    {% for area in areas %}
+        <tr>
+            <td>{{ area.id }}</td>
+            <td>{{ area.name }}</td>
+            <td>
+                <a href="{{ path('area_show', {'id': area.id}) }}">show</a>
+                <a href="{{ path('area_edit', {'id': area.id}) }}">edit</a>
+            </td>
+        </tr>
+    {% else %}
+        <tr>
+            <td colspan="3">no records found</td>
+        </tr>
+    {% endfor %}
+{% endblock %}
