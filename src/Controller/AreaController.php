@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Area;
 use App\Form\AreaType;
 use App\Repository\AreaRepository;
+use App\Service\FormHandler;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -24,25 +25,15 @@ final class AreaController extends AbstractController
     }
 
     #[Route('/new', name: 'area_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, RouterInterface $router, EntityManagerInterface $entityManager): Response
+    public function new(FormHandler $formHandler): Response
     {
-        $area = new Area();
-        $form = $this->createForm(AreaType::class, $area);
-        $form->handleRequest($request);
+        return $formHandler->handleForm(AreaType::class, new Area(), 'Ajouter un emplacement', $this->generateUrl('area_index'));
+    }
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($area);
-            $entityManager->flush();
-
-            return $this->redirectToRoute('area_index', [], Response::HTTP_SEE_OTHER);
-        }
-
-        return $this->render('crud/edit.html.twig', [
-            'title' => 'Ajouter un emplacement',
-            'backToListLink' => $router->generate('area_index'),
-            'area' => $area,
-            'form' => $form,
-        ]);
+    #[Route('/{id}/edit', name: 'area_edit', methods: ['GET', 'POST'])]
+    public function edit(FormHandler $formHandler, Area $area): Response
+    {
+        return $formHandler->handleForm(AreaType::class, $area, 'Modifier un emplacement', $this->generateUrl('area_index'));
     }
 
     #[Route('/{id}', name: 'area_show', methods: ['GET'])]
@@ -51,26 +42,6 @@ final class AreaController extends AbstractController
         return $this->render('area/show.html.twig', [
             'entity' => $area,
             'deleteLink' => $router->generate('area_delete', ['id' => $area->getId()]),
-        ]);
-    }
-
-    #[Route('/{id}/edit', name: 'area_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, RouterInterface $router, Area $area, EntityManagerInterface $entityManager): Response
-    {
-        $form = $this->createForm(AreaType::class, $area);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
-
-            return $this->redirectToRoute('area_index', [], Response::HTTP_SEE_OTHER);
-        }
-
-        return $this->render('crud/edit.html.twig', [
-            'title' => 'Modifier un emplacement',
-            'backToListLink' => $router->generate('area_index'),
-            'area' => $area,
-            'form' => $form,
         ]);
     }
 

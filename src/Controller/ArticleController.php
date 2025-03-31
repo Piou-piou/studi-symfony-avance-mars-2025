@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Article;
 use App\Form\ArticleType;
 use App\Repository\ArticleRepository;
+use App\Service\FormHandler;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,25 +26,15 @@ final class ArticleController extends AbstractController
     }
 
     #[Route('/new', name: 'article_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, RouterInterface $router, EntityManagerInterface $entityManager): Response
+    public function new(FormHandler $formHandler): Response
     {
-        $article = new Article();
-        $form = $this->createForm(ArticleType::class, $article);
-        $form->handleRequest($request);
+        return $formHandler->handleForm(ArticleType::class, new Article(), 'Ajouter un article', $this->generateUrl('article_index'));
+    }
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($article);
-            $entityManager->flush();
-
-            return $this->redirectToRoute('article_index', [], Response::HTTP_SEE_OTHER);
-        }
-
-        return $this->render('crud/edit.html.twig', [
-            'title' => 'Ajouter un article',
-            'backToListLink' => $router->generate('article_index'),
-            'article' => $article,
-            'form' => $form,
-        ]);
+    #[Route('/{id}/edit', name: 'article_edit', methods: ['GET', 'POST'])]
+    public function edit(FormHandler $formHandler, Article $article): Response
+    {
+        return $formHandler->handleForm(ArticleType::class, $article, 'Modifier un article', $this->generateUrl('article_index'));
     }
 
     #[Route('/{id}', name: 'article_show', methods: ['GET'])]
@@ -52,26 +43,6 @@ final class ArticleController extends AbstractController
         return $this->render('article/show.html.twig', [
             'entity' => $article,
             'deleteLink' => $router->generate('article_delete', ['id' => $article->getId()]),
-        ]);
-    }
-
-    #[Route('/{id}/edit', name: 'article_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, RouterInterface $router, Article $article, EntityManagerInterface $entityManager): Response
-    {
-        $form = $this->createForm(ArticleType::class, $article);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
-
-            return $this->redirectToRoute('article_index', [], Response::HTTP_SEE_OTHER);
-        }
-
-        return $this->render('crud/edit.html.twig', [
-            'title' => 'Modifier un article',
-            'backToListLink' => $router->generate('article_index'),
-            'article' => $article,
-            'form' => $form,
         ]);
     }
 
