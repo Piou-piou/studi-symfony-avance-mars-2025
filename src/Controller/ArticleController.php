@@ -8,7 +8,6 @@ use App\Repository\ArticleRepository;
 use App\Service\FormHandler;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\RouterInterface;
@@ -31,13 +30,13 @@ final class ArticleController extends AbstractController
         return $formHandler->handleForm(ArticleType::class, new Article(), 'Ajouter un article', $this->generateUrl('article_index'));
     }
 
-    #[Route('/{id}/edit', name: 'article_edit', methods: ['GET', 'POST'])]
+    #[Route('/{id}/edit', name: 'article_edit', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
     public function edit(FormHandler $formHandler, Article $article): Response
     {
         return $formHandler->handleForm(ArticleType::class, $article, 'Modifier un article', $this->generateUrl('article_index'));
     }
 
-    #[Route('/{id}', name: 'article_show', methods: ['GET'])]
+    #[Route('/{id}', name: 'article_show', requirements: ['id' => '\d+'], methods: ['GET'])]
     public function show(RouterInterface $router, Article $article): Response
     {
         return $this->render('article/show.html.twig', [
@@ -46,13 +45,11 @@ final class ArticleController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'article_delete', methods: ['POST'])]
-    public function delete(Request $request, Article $article, EntityManagerInterface $entityManager): Response
+    #[Route('/{id}/delete', name: 'article_delete', requirements: ['id' => '\d+'])]
+    public function delete(EntityManagerInterface $entityManager, Article $article): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$article->getId(), $request->getPayload()->getString('_token'))) {
-            $entityManager->remove($article);
-            $entityManager->flush();
-        }
+        $entityManager->remove($article);
+        $entityManager->flush();
 
         return $this->redirectToRoute('article_index', [], Response::HTTP_SEE_OTHER);
     }

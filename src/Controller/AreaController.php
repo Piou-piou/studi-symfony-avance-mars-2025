@@ -8,7 +8,6 @@ use App\Repository\AreaRepository;
 use App\Service\FormHandler;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\RouterInterface;
@@ -17,10 +16,11 @@ use Symfony\Component\Routing\RouterInterface;
 final class AreaController extends AbstractController
 {
     #[Route(name: 'area_index', methods: ['GET'])]
-    public function index(AreaRepository $areaRepository): Response
+    public function index(RouterInterface $router, AreaRepository $areaRepository): Response
     {
         return $this->render('area/index.html.twig', [
             'areas' => $areaRepository->findAll(),
+            'createLink' => $router->generate('area_new'),
         ]);
     }
 
@@ -46,12 +46,10 @@ final class AreaController extends AbstractController
     }
 
     #[Route('/{id}', name: 'area_delete', methods: ['POST'])]
-    public function delete(Request $request, Area $area, EntityManagerInterface $entityManager): Response
+    public function delete(EntityManagerInterface $entityManager, Area $area): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$area->getId(), $request->getPayload()->getString('_token'))) {
-            $entityManager->remove($area);
-            $entityManager->flush();
-        }
+        $entityManager->remove($area);
+        $entityManager->flush();
 
         return $this->redirectToRoute('area_index', [], Response::HTTP_SEE_OTHER);
     }

@@ -1,0 +1,34 @@
+{% extends 'crud/list.html.twig' %}
+
+{% block title %}Liste des stocks{% endblock %}
+{% block page_title %}Liste des stocks{% endblock %}
+
+{% block thead_td %}
+    <th>Id</th>
+    <th>Article</th>
+    <th>Emplacement</th>
+    <th>Quantité</th>
+    <th>actions</th>
+{% endblock %}
+
+{% block tbody %}
+    {% for stock in article_stocks %}
+        <tr>
+            <td>{{ stock.id }}</td>
+            <td>{{ stock.article }}</td>
+            <td>{{ stock.area }}</td>
+            <td class="quantity">
+                <a href="{{ path('stock_article_decrease', {'id': stock.id}) }}" class="space-right">-</a>
+                {{ stock.quantity }}
+                <a href="{{ path('stock_article_increase', {'id': stock.id}) }}" class="space-left">+</a>
+            </td>
+            <td>
+                <a href="{{ path('stock_article_edit', {'id': stock.id}) }}">edit</a>
+            </td>
+        </tr>
+    {% else %}
+        <tr>
+            <td colspan="3">no records found</td>
+        </tr>
+    {% endfor %}
+{% endblock %}
