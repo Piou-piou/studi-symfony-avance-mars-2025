@@ -8,6 +8,7 @@ use App\Repository\StockArticleRepository;
 use App\Service\FormHandler;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -47,7 +48,7 @@ final class StockArticleController extends AbstractController
 
     #[Route('/{id}/increase', name: 'article_increase', requirements: ['id' => '\d+'], defaults: ['increase' => true], methods: ['GET'])]
     #[Route('/{id}/decrease', name: 'article_decrease', requirements: ['id' => '\d+'], defaults: ['increase' => false], methods: ['GET'])]
-    public function increaseStock(Request $request, EntityManagerInterface $em, StockArticle $stockArticle, bool $increase): Response
+    public function increaseStock(Request $request, EntityManagerInterface $em, StockArticle $stockArticle, bool $increase): JsonResponse
     {
         $newQuantity = $stockArticle->getQuantity();
         if (true === $increase) {
@@ -60,6 +61,8 @@ final class StockArticleController extends AbstractController
         $em->persist($stockArticle);
         $em->flush();
 
-        return $this->redirectToRoute('stock_article_index', [], Response::HTTP_SEE_OTHER);
+        return new JsonResponse([
+            'stock' => $stockArticle->getQuantity(),
+        ], Response::HTTP_OK);
     }
 }

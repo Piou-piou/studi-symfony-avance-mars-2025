@@ -16,8 +16,8 @@ class ArticleType extends AbstractType
         $builder
             ->add('name')
             ->add('structure', EntityType::class, [
-                'class' => structure::class,
-                'choice_label' => 'id',
+                'class' => Structure::class,
+                'choice_label' => 'name',
             ])
         ;
     }

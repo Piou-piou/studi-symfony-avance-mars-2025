@@ -17,10 +17,10 @@
             <td>{{ stock.id }}</td>
             <td>{{ stock.article }}</td>
             <td>{{ stock.area }}</td>
-            <td class="quantity">
-                <a href="{{ path('stock_article_decrease', {'id': stock.id}) }}" class="space-right">-</a>
-                {{ stock.quantity }}
-                <a href="{{ path('stock_article_increase', {'id': stock.id}) }}" class="space-left">+</a>
+            <td class="quantity" data-controller="article-stock--stock">
+                <button class="space-right" data-action="click->article-stock--stock#decrease" data-href="{{ path('stock_article_decrease', {'id': stock.id}) }}">-</button>
+                <span data-article-stock--stock-target="stock">{{ stock.quantity }}</span>
+                <button class="space-left"  data-action="click->article-stock--stock#increase" data-href="{{ path('stock_article_increase', {'id': stock.id}) }}">+</button>
             </td>
             <td>
                 <a href="{{ path('stock_article_edit', {'id': stock.id}) }}">edit</a>
@@ -28,7 +28,7 @@
         </tr>
     {% else %}
         <tr>
-            <td colspan="3">no records found</td>
+            <td colspan="5" class="text-center">no records found</td>
         </tr>
     {% endfor %}
 {% endblock %}
