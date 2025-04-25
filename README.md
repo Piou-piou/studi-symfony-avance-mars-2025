@@ -7,3 +7,5 @@ Live 2 : https://github.com/Piou-piou/studi-symfony-avance-mars-2025/tree/cf2709
 live 3 : https://github.com/Piou-piou/studi-symfony-avance-mars-2025/tree/6bad8247e56ced3d051af9c31526e9c75fabed08
 
 Live 4 : https://github.com/Piou-piou/studi-symfony-avance-mars-2025/tree/50442688adfecdfb35b4f42ed691e0667e413fa6
+
+Live 6 : https://github.com/Piou-piou/studi-symfony-avance-mars-2025/tree/a328188ba9e49491af762d54195b04e86518eb03
