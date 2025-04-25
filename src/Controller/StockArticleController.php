@@ -9,6 +9,7 @@ use App\Service\FormHandler;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -33,11 +34,37 @@ final class StockArticleController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'article_edit', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
-    public function edit(FormHandler $formHandler, StockArticle $stock): Response
+    public function edit(EntityManagerInterface $em, Request $request, StockArticle $stock): Response
     {
-        return $formHandler->handleForm(StockArticleType::class, $stock, 'Modifier ce stock', $this->generateUrl('stock_article_index'));
+        $form = $this->createForm(StockArticleType::class, $stock);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $stockArticleArea = $em->getRepository(StockArticle::class)->findOnyBySameAreaAndArticle($stock);
+
+            $em->persist($stock);
+
+            if ($stockArticleArea) {
+                $stockArticleArea->setQuantity($stockArticleArea->getQuantity() + $stock->getQuantity());
+                $em->persist($stockArticleArea);
+
+                $em->remove($stock);
+            }
+
+            $em->flush();
+
+            return new RedirectResponse($this->generateUrl('stock_article_index'));
+        }
+
+        return new Response($this->render('crud/edit.html.twig', [
+            'title' => 'Modifier ce stock',
+            'backToListLink' => $this->generateUrl('stock_article_index'),
+            'entity' => $stock,
+            'form' => $form->createView(),
+        ]));
     }
 
+    #[Route('/{id}/delete', name: 'article_delete', requirements: ['id' => '\d+'])]
     public function delete(EntityManagerInterface $em, StockArticle $stockArticle): Response
     {
         $em->remove($stockArticle);

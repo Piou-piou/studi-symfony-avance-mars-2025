@@ -15,4 +15,17 @@ class StockArticleRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, StockArticle::class);
     }
+
+    public function findOnyBySameAreaAndArticle(StockArticle $stockArticle): ?StockArticle
+    {
+        return $this->createQueryBuilder('sa')
+            ->where('sa.article = :article')
+            ->andWhere('sa.area = :area')
+            ->andWhere('sa != :stockArticle')
+            ->setParameter('article', $stockArticle->getArticle())
+            ->setParameter('area', $stockArticle->getArea())
+            ->setParameter('stockArticle', $stockArticle)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 }
