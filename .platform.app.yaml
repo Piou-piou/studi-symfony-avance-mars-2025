@@ -9,8 +9,8 @@ web:
       expires: 1h
       passthru: "/index.php"
 
-#mounts:
-#  "/var/cache": { source: local, source_path: var/cache }
+mounts:
+  "/var/cache": { source: local, source_path: var/cache }
 
 relationships:
     database: "database:mysql"
@@ -21,8 +21,7 @@ hooks:
 
     curl -s https://get.symfony.com/cloud/configurator | bash
 
-    symfony-build    
-
+    symfony-build
   deploy: |
     set -x -e
 
