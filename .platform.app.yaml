@@ -13,7 +13,7 @@ web:
 #  "/var/cache": { source: local, source_path: var/cache }
 
 relationships:
-    database: "database:mariadb"
+    database: "database:mysql"
 
 hooks:
   build: |
