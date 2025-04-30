@@ -1,4 +1,29 @@
-
 name: app
 
 type: 'php:8.4'
+
+web:
+  locations:
+    "/":
+      root: "public"
+      expires: 1h
+      passthru: "/index.php"
+
+mounts:
+  "/var/cache": { source: local, source_path: var/cache }
+
+relationships:
+    database: "database:mariadb"
+
+hooks:
+  build: |
+    set -x -e
+
+    curl -s https://get.symfony.com/cloud/configurator | bash
+
+    symfony-build    
+
+  deploy: |
+    set -x -e
+
+    symfony-deploy
