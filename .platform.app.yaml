@@ -12,6 +12,8 @@ web:
 mounts:
   "/var/cache": { source: local, source_path: var/cache }
 
+disk: 256
+
 relationships:
     database: "database:mysql"
 
